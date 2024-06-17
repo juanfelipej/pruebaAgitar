@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectar Agitación del Celular</title>
+    <style>
+        #colorDiv {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            margin: 50px auto;
+            text-align: center;
+            line-height: 200px;
+            font-size: 20px;
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="colorDiv">¡Agítame!</div>
+
+    <script>
+        let shakingThreshold = 15; // Umbral para detectar la agitación
+        let lastX = null, lastY = null, lastZ = null;
+
+        window.addEventListener('devicemotion', function(event) {
+            let acceleration = event.accelerationIncludingGravity;
+            let currentX = acceleration.x;
+            let currentY = acceleration.y;
+            let currentZ = acceleration.z;
+
+            if (lastX !== null && lastY !== null && lastZ !== null) {
+                let deltaX = Math.abs(lastX - currentX);
+                let deltaY = Math.abs(lastY - currentY);
+                let deltaZ = Math.abs(lastZ - currentZ);
+
+                if (deltaX > shakingThreshold || deltaY > shakingThreshold || deltaZ > shakingThreshold) {
+                    changeColor();
+                }
+            }
+
+            lastX = currentX;
+            lastY = currentY;
+            lastZ = currentZ;
+        });
+
+        function changeColor() {
+            let colorDiv = document.getElementById('colorDiv');
+            let currentColor = colorDiv.style.backgroundColor;
+            colorDiv.style.backgroundColor = (currentColor === 'red') ? 'blue' : 'red';
+        }
+    </script>
+</body>
+</html>

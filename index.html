@@ -16,16 +16,40 @@
             color: white;
             border-radius: 10px;
         }
+        #startButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <div id="colorDiv">¡Agítame!</div>
+    <button id="startButton">Empezar</button>
 
     <script>
         let shakingThreshold = 15; // Umbral para detectar la agitación
         let lastX = null, lastY = null, lastZ = null;
 
-        window.addEventListener('devicemotion', function(event) {
+        document.getElementById('startButton').addEventListener('click', function() {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('devicemotion', handleMotion);
+                        } else {
+                            alert('Permiso denegado para acceder a los sensores de movimiento');
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Para navegadores que no requieren permiso explícito
+                window.addEventListener('devicemotion', handleMotion);
+            }
+        });
+
+        function handleMotion(event) {
             let acceleration = event.accelerationIncludingGravity;
             let currentX = acceleration.x;
             let currentY = acceleration.y;
@@ -44,7 +68,7 @@
             lastX = currentX;
             lastY = currentY;
             lastZ = currentZ;
-        });
+        }
 
         function changeColor() {
             let colorDiv = document.getElementById('colorDiv');

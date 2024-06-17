@@ -3,6 +3,7 @@ let isShaking = false;
 let lastX = null, lastY = null, lastZ = null;
 let rotation = 0; // Current rotation angle
 let spinInterval = null; // Timer for rotation animation
+let decelerationRate = 0.95; // Deceleration factor (0 < decelerationRate < 1)
 
 document.getElementById('startButton').addEventListener('click', function() {
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
@@ -52,6 +53,17 @@ function handleMotion(event) {
 
 function startSpinning() {
     spinInterval = setInterval(() => {
-        rotation += Math.random() * 5; // Randomize spin speed for a natural look
+        if (isShaking) {
+            rotation += Math.random() * 5; // Randomize spin speed for a natural look
+        } else {
+            rotation *= decelerationRate; // Decelerate if not shaking
+        }
+
         document.getElementById('ruleta').style.transform = `rotate(${rotation}deg)`;
-    }, 10); //
+    }, 10);
+}
+
+function stopSpinning() {
+    clearInterval(spinInterval);
+    spinInterval = null;
+}
